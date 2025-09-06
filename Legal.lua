@@ -1,4 +1,4 @@
--- RanHub Legal Loader (Versi GUI)
+-- RanHub Legal Loader (Versi GUI Lanjutan)
 -- by NASAPROGRAMMER
 
 -- Hapus GUI lama
@@ -37,11 +37,11 @@ PopupText.TextColor3 = Color3.fromRGB(255, 255, 255)
 PopupText.Parent = Popup
 
 -----------------------
--- MAIN HUB (Kotak gede)
+-- MAIN HUB
 -----------------------
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 500, 0, 300)
-MainFrame.Position = UDim2.new(0.5, -250, 0.5, -150)
+MainFrame.Size = UDim2.new(0, 600, 0, 350)
+MainFrame.Position = UDim2.new(0.5, -300, 0.5, -175)
 MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 MainFrame.BorderSizePixel = 0
 MainFrame.Visible = false
@@ -51,82 +51,133 @@ local Corner2 = Instance.new("UICorner")
 Corner2.CornerRadius = UDim.new(0, 12)
 Corner2.Parent = MainFrame
 
+-- HEADER
+local Header = Instance.new("Frame")
+Header.Size = UDim2.new(1, 0, 0, 40)
+Header.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+Header.BorderSizePixel = 0
+Header.Parent = MainFrame
+
 local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 50)
+Title.Size = UDim2.new(1, -80, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
 Title.BackgroundTransparency = 1
 Title.Text = "RanHub Legal - Main Menu"
 Title.Font = Enum.Font.GothamBold
-Title.TextSize = 24
+Title.TextSize = 20
 Title.TextColor3 = Color3.fromRGB(0, 200, 255)
-Title.Parent = MainFrame
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = Header
 
--- Fungsi tombol
-local function makeButton(text, pos, callback)
-    local Btn = Instance.new("TextButton")
-    Btn.Size = UDim2.new(0, 460, 0, 40)
-    Btn.Position = UDim2.new(0, 20, 0, pos)
-    Btn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    Btn.Text = text
-    Btn.Font = Enum.Font.Gotham
-    Btn.TextSize = 18
-    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Btn.Parent = MainFrame
+-- Close Button (X)
+local CloseBtn = Instance.new("TextButton")
+CloseBtn.Size = UDim2.new(0, 40, 0, 30)
+CloseBtn.Position = UDim2.new(1, -45, 0, 5)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseBtn.Text = "X"
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 18
+CloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseBtn.Parent = Header
 
-    local BC = Instance.new("UICorner")
-    BC.CornerRadius = UDim.new(0, 8)
-    BC.Parent = Btn
-
-    Btn.MouseButton1Click:Connect(callback)
-end
-
------------------------
--- 5 TOMBOL ISENG
------------------------
-makeButton("🤯 Gatakin Kepala Temen", 60, function()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "RanHub",
-        Text = "Wkwkwk kepala temenmu ilang 🤯 (boongan)",
-        Duration = 4
-    })
+CloseBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
 end)
 
-makeButton("🥔 Mode Kentang", 110, function()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "RanHub",
-        Text = "Mode Kentang Aktif! FPS drop (palsu) 🥔",
-        Duration = 4
-    })
-end)
+-- Minimize Button (-)
+local MinBtn = Instance.new("TextButton")
+MinBtn.Size = UDim2.new(0, 40, 0, 30)
+MinBtn.Position = UDim2.new(1, -90, 0, 5)
+MinBtn.BackgroundColor3 = Color3.fromRGB(50, 150, 200)
+MinBtn.Text = "-"
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 18
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.Parent = Header
 
-makeButton("🙋 Spam Halo", 160, function()
-    for i=1,3 do
-        game.StarterGui:SetCore("SendNotification", {
-            Title = "RanHub",
-            Text = "Halo " .. game.Players.LocalPlayer.Name .. " 🙋",
-            Duration = 2
-        })
-        task.wait(1)
+local Minimized = false
+MinBtn.MouseButton1Click:Connect(function()
+    Minimized = not Minimized
+    for _, child in pairs(MainFrame:GetChildren()) do
+        if child ~= Header then
+            child.Visible = not Minimized
+        end
     end
 end)
 
-makeButton("❤️ Bucin Mode", 210, function()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "RanHub",
-        Text = "Aku cinta kamu, " .. game.Players.LocalPlayer.Name .. " ❤️",
-        Duration = 5
-    })
+-----------------------
+-- PANEL MENU KIRI
+-----------------------
+local SideMenu = Instance.new("Frame")
+SideMenu.Size = UDim2.new(0, 180, 1, -40)
+SideMenu.Position = UDim2.new(0, 0, 0, 40)
+SideMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+SideMenu.BorderSizePixel = 0
+SideMenu.Parent = MainFrame
+
+-----------------------
+-- PANEL DETAIL KANAN
+-----------------------
+local DetailPanel = Instance.new("Frame")
+DetailPanel.Size = UDim2.new(1, -180, 1, -40)
+DetailPanel.Position = UDim2.new(0, 180, 0, 40)
+DetailPanel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+DetailPanel.BorderSizePixel = 0
+DetailPanel.Parent = MainFrame
+
+local DetailText = Instance.new("TextLabel")
+DetailText.Size = UDim2.new(1, -20, 1, -20)
+DetailText.Position = UDim2.new(0, 10, 0, 10)
+DetailText.BackgroundTransparency = 1
+DetailText.Text = "Pilih menu di kiri"
+DetailText.Font = Enum.Font.Gotham
+DetailText.TextSize = 18
+DetailText.TextWrapped = true
+DetailText.TextColor3 = Color3.fromRGB(255, 255, 255)
+DetailText.Parent = DetailPanel
+
+-----------------------
+-- Fungsi buat tombol menu kiri
+-----------------------
+local function makeMenu(text, y, onClick)
+    local Btn = Instance.new("TextButton")
+    Btn.Size = UDim2.new(1, -20, 0, 40)
+    Btn.Position = UDim2.new(0, 10, 0, y)
+    Btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    Btn.Text = text
+    Btn.Font = Enum.Font.Gotham
+    Btn.TextSize = 16
+    Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Btn.Parent = SideMenu
+
+    local BC = Instance.new("UICorner")
+    BC.CornerRadius = UDim.new(0, 6)
+    BC.Parent = Btn
+
+    Btn.MouseButton1Click:Connect(onClick)
+end
+
+-----------------------
+-- 5 MENU ISENG
+-----------------------
+makeMenu("🤯 Gatakin Kepala Temen", 10, function()
+    DetailText.Text = "Setting Gatakin Kepala Temen:\n\n[Slider Gatakan Level (dummy)]"
 end)
 
-makeButton("🔊 Jumpscare Sound", 260, function()
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://4590657391" -- suara random
-    sound.Parent = game.Workspace
-    sound:Play()
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "RanHub",
-        Text = "BOOM! 🔊",
-        Duration = 3
-    })
+makeMenu("❤️ Mode Bucin", 60, function()
+    DetailText.Text = "Tuliskan nama Bucin kamu disini:\n\n(contoh: Ayang, Doi, dll)"
+end)
+
+makeMenu("🥔 Mode Kentang", 110, function()
+    DetailText.Text = "Mode Kentang Aktif!\nFPS drop palsu (cuma tulisan doang)"
+end)
+
+makeMenu("🙋 Spam Halo", 160, function()
+    DetailText.Text = "Spam Halo ke layar kamu 3x ✨"
+end)
+
+makeMenu("🔊 Jumpscare Sound", 210, function()
+    DetailText.Text = "BOOM! 🔊 Suara random akan dimainkan"
 end)
 
 -----------------------
