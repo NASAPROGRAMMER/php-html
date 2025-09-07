@@ -83,7 +83,6 @@ mt.__namecall = function(self,...)
     local args = {...}
     if method=="FireServer" or method=="InvokeServer" then
         local logText = string.format("[%s] Remote: %s | Args: %s", method,tostring(self.Name),table.concat(args,", "))
-        -- log terbaru di atas
         local logLabel = Instance.new("TextLabel")
         logLabel.Size = UDim2.new(1,0,0,20)
         logLabel.BackgroundTransparency = 1
@@ -93,7 +92,7 @@ mt.__namecall = function(self,...)
         logLabel.TextSize = 16
         logLabel.Text = logText
         logLabel.Parent = LogFrame
-        logLabel.LayoutOrder = -tick() -- urutkan terbaru di atas
+        logLabel.LayoutOrder = -tick() -- terbaru di atas
         LogFrame.CanvasSize = UDim2.new(0,0,0,UIListLayout.AbsoluteContentSize.Y)
     end
     return oldNamecall(self,...)
@@ -141,9 +140,29 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
         {name="Octopus",favorite=false}
     }
 
-    local GiftRemote = game.ReplicatedStorage:FindFirstChild("GiftRemote") or Instance.new("RemoteEvent")
-    GiftRemote.Name = "GiftRemote"
-    GiftRemote.Parent = game.ReplicatedStorage
+    -- AUTO DETECT REMOTE
+    local function findGiftRemote()
+        local remotes = {}
+        -- cek ReplicatedStorage
+        for _,v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
+            if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
+                table.insert(remotes,v)
+            end
+        end
+        -- sederhana: pilih remote yang mengandung kata "gift" atau "Gift"
+        for _,r in ipairs(remotes) do
+            if string.match(r.Name,"[Gg]ift") then
+                return r
+            end
+        end
+        return remotes[1] -- fallback remote pertama kalau tidak ada yang match
+    end
+
+    local GiftRemote = findGiftRemote()
+    if not GiftRemote then
+        DetailText.Text = "❌ Tidak ada RemoteEvent ditemukan!"
+        return
+    end
 
     GiftBtn.MouseButton1Click:Connect(function()
         local targetName = TargetBox.Text
@@ -164,29 +183,4 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
             DetailText.Text = "Tidak ada item non-favorite untuk digift."
         end
     end)
-end)
-
------------------------
--- MENU 3: MODE BUCIN
------------------------
-makeMenu("❤️ Mode Bucin",100,function()
-    DetailText.Text = "Isi nama bucin kamu disini (dummy) ❤️"
-end)
-
------------------------
--- MENU 4: MODE KENTANG
------------------------
-makeMenu("🥔 Mode Kentang",145,function()
-    DetailText.Text = "Mode Kentang aktif! FPS drop palsu 🥔"
-end)
-
------------------------
--- MENU 5: JUMPSCARE
------------------------
-makeMenu("🔊 Jumpscare",190,function()
-    local sound = Instance.new("Sound")
-    sound.SoundId = "rbxassetid://4590657391"
-    sound.Parent = workspace
-    sound:Play()
-    DetailText.Text = "BOOM! 🔊 (suara random bakal main)"
 end)
