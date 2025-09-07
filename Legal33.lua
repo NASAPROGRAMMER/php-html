@@ -106,7 +106,7 @@ makeMenu("🤯 Teleport Maju 100M",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*1660
+    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*1670
     DetailText.Text = "Kamu maju 100 meter ke arah pandangan 🤯"
 end)
 
