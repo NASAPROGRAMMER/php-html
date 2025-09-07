@@ -99,21 +99,16 @@ mt.__namecall = function(self,...)
 end
 setreadonly(mt,true)
 
-
 -----------------------
--- MENU 1: TELEPORT MAJU 10.000M
+-- MENU 1: TELEPORT MAJU 100M
 -----------------------
-makeMenu("🤯 Teleport Maju 10.000M",10,function()
+makeMenu("🤯 Teleport Maju 100M",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    
-    -- teleport maju 10.000 meter sesuai arah pandangan
-    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * 150
-    
-    DetailText.Text = "Kamu teleport 1.000 meter! 🌴"
+    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*100
+    DetailText.Text = "Kamu maju 100 meter ke arah pandangan 🤯"
 end)
-
 
 -----------------------
 -- MENU 2: AUTO GIFT GUI ASLI
