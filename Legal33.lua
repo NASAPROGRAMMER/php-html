@@ -109,9 +109,9 @@ makeMenu("🤯 Teleport Maju 10.000M",10,function()
     local hrp = character:WaitForChild("HumanoidRootPart")
     
     -- teleport maju 10.000 meter sesuai arah pandangan
-    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * 10000
+    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector * 1000
     
-    DetailText.Text = "Kamu teleport 10.000 meter! 🌴"
+    DetailText.Text = "Kamu teleport 1.000 meter! 🌴"
 end)
 
 
