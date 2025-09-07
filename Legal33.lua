@@ -1,3 +1,20 @@
+-- 🔍 REMOTEEVENT SPY (letakkan di awal script)
+local mt = getrawmetatable(game)
+local oldNamecall = mt.__namecall
+setreadonly(mt, false)
+
+mt.__namecall = function(self, ...)
+    local method = getnamecallmethod()
+    local args = {...}
+    if method == "FireServer" then
+        warn("[FIRE SERVER] Remote:", self.Name, "Args:", unpack(args))
+    elseif method == "InvokeServer" then
+        warn("[INVOKE SERVER] Remote:", self.Name, "Args:", unpack(args))
+    end
+    return oldNamecall(self, ...)
+end
+setreadonly(mt, true)
+
 -- GUI FRAME UTAMA
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -69,12 +86,7 @@ makeMenu("🤯 Teleport Random", 10, function()
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
 
-    -- Teleport ke posisi random sekitar 20 stud
-    local randomOffset = Vector3.new(
-        math.random(-20, 20), 
-        0, 
-        math.random(-20, 20)
-    )
+    local randomOffset = Vector3.new(math.random(-20, 20), 0, math.random(-20, 20))
     hrp.CFrame = hrp.CFrame + randomOffset
 
     DetailText.Text = "Kamu ditransfer ke lokasi random 🤯"
@@ -86,17 +98,14 @@ end)
 makeMenu("🎁 Auto Gift Backpack", 55, function()
     DetailText.Text = "Masukkan username target lalu klik Kirim Gift 🎁"
 
-    -- TextBox untuk isi target username
     local TargetBox = Instance.new("TextBox")
     TargetBox.Size = UDim2.new(1, -20, 0, 30)
     TargetBox.Position = UDim2.new(0, 10, 0, 100)
     TargetBox.PlaceholderText = "Nama target..."
-    TargetBox.Text = ""
     TargetBox.TextColor3 = Color3.fromRGB(255, 255, 255)
     TargetBox.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
     TargetBox.Parent = DetailFrame
 
-    -- Tombol Kirim
     local GiftBtn = Instance.new("TextButton")
     GiftBtn.Size = UDim2.new(0, 120, 0, 30)
     GiftBtn.Position = UDim2.new(0, 10, 0, 140)
@@ -105,7 +114,6 @@ makeMenu("🎁 Auto Gift Backpack", 55, function()
     GiftBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 90)
     GiftBtn.Parent = DetailFrame
 
-    -- contoh backpack dummy
     local backpack = {
         {name = "Manta Ray", favorite = true},
         {name = "Blob Fish", favorite = false},
@@ -114,7 +122,6 @@ makeMenu("🎁 Auto Gift Backpack", 55, function()
         {name = "Octopus", favorite = false}
     }
 
-    -- Remote dummy (buat edukasi, di game asli ganti sesuai remote event)
     local GiftRemote = Instance.new("RemoteEvent")
     GiftRemote.Name = "GiftRemote"
     GiftRemote.Parent = game.ReplicatedStorage
@@ -130,7 +137,7 @@ makeMenu("🎁 Auto Gift Backpack", 55, function()
         for _, item in ipairs(backpack) do
             if not item.favorite then
                 giftedCount += 1
-                -- simulasi remote event
+                -- FIRE SERVER -> Spy otomatis akan tampil di output
                 GiftRemote:FireServer(item.name, targetName)
             end
         end
