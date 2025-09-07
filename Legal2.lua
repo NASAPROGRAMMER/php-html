@@ -1,5 +1,5 @@
 -- GUI FRAME UTAMA
-local ScreenGui = Instance.new("RanHub")
+local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- FRAME KIRI UNTUK MENU
