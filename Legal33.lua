@@ -100,21 +100,21 @@ end
 setreadonly(mt,true)
 
 -----------------------
--- MENU 1: TELEPORT
+-- MENU 1: TELEPORT MAJU 100M
 -----------------------
-makeMenu("🤯 Teleport Random",10,function()
+makeMenu("🤯 Teleport Maju 100M",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = hrp.CFrame + Vector3.new(math.random(-20,20),0,math.random(-20,20))
-    DetailText.Text = "Kamu ditransfer ke lokasi random 🤯"
+    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*100
+    DetailText.Text = "Kamu maju 100 meter ke arah pandangan 🤯"
 end)
 
 -----------------------
--- MENU 2: AUTO GIFT CANGGIH
+-- MENU 2: AUTO GIFT GUI ASLI
 -----------------------
 makeMenu("🎁 Auto Gift Backpack",55,function()
-    DetailText.Text = "Masukkan username target (otomatis kirim non-favorite) 🎁"
+    DetailText.Text = "Masukkan username target → semua item non-favorite otomatis digift 🎁"
 
     local TargetBox = Instance.new("TextBox")
     TargetBox.Size = UDim2.new(1,-20,0,30)
@@ -124,51 +124,33 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
     TargetBox.BackgroundColor3 = Color3.fromRGB(70,70,70)
     TargetBox.Parent = DetailFrame
 
-    local backpack = {
-        {name="Manta Ray",favorite=true},
-        {name="Blob Fish",favorite=false},
-        {name="Shark",favorite=false},
-        {name="Legendary Tuna",favorite=true},
-        {name="Octopus",favorite=false}
-    }
+    local function autoGift()
+        local targetName = TargetBox.Text
+        if targetName=="" then return end
 
-    -- Cari RemoteFunction/RemoteEvent otomatis
-    local function findRemote()
-        for _,v in pairs(game:GetDescendants()) do
-            if (v:IsA("RemoteFunction") or v:IsA("RemoteEvent")) and string.find(v.Name,"RF/Initiate Trade") then
-                return v
-            end
-        end
-        return nil
-    end
-
-    -- Tunggu sampai Remote muncul
-    spawn(function()
-        local GiftRemote
-        repeat
-            GiftRemote = findRemote()
-            wait(0.5)
-        until GiftRemote
-
-        -- Auto gift: begitu username diisi, langsung kirim semua non-favorite
-        TargetBox:GetPropertyChangedSignal("Text"):Connect(function()
-            local targetName = TargetBox.Text
-            if targetName~="" then
-                local giftedCount = 0
-                for _,item in ipairs(backpack) do
-                    if not item.favorite then
-                        giftedCount += 1
-                        GiftRemote:InvokeServer(item.name,targetName)
+        -- ambil semua item GUI non-favorite
+        local backpackGui = player:WaitForChild("PlayerGui"):WaitForChild("BackpackGUI") -- ganti sesuai nama GUI game
+        for _,itemFrame in pairs(backpackGui.ItemsFolder:GetChildren()) do
+            if not itemFrame.Favorite.Value then
+                local giftBtn = itemFrame:FindFirstChild("GiftButton")
+                if giftBtn then
+                    -- set target
+                    local targetBox = backpackGui:FindFirstChild("TargetTextBox")
+                    if targetBox then targetBox.Text = targetName end
+                    -- klik tombol gift
+                    if giftBtn:IsA("TextButton") then
+                        giftBtn:Activate()
+                    elseif giftBtn:IsA("ClickDetector") then
+                        fireclickdetector(giftBtn)
                     end
                 end
-                if giftedCount>0 then
-                    DetailText.Text = "🎁 "..giftedCount.." item berhasil digift ke "..targetName
-                else
-                    DetailText.Text = "Tidak ada item non-favorite untuk digift."
-                end
             end
-        end)
-    end)
+        end
+        DetailText.Text = "🎁 Semua item non-favorite berhasil dikirim ke "..targetName
+    end
+
+    -- trigger auto gift ketika username diisi
+    TargetBox:GetPropertyChangedSignal("Text"):Connect(autoGift)
 end)
 
 -----------------------
