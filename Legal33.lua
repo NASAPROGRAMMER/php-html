@@ -106,15 +106,15 @@ makeMenu("🤯 Teleport Random",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = hrp.CFrame + Vector3.new(math.random(-200,200),10,math.random(-20,20))
+    hrp.CFrame = hrp.CFrame + Vector3.new(math.random(-20,20),0,math.random(-20,20))
     DetailText.Text = "Kamu ditransfer ke lokasi random 🤯"
 end)
 
 -----------------------
--- MENU 2: AUTO GIFT NON-FAVORITE
+-- MENU 2: AUTO GIFT CANGGIH
 -----------------------
 makeMenu("🎁 Auto Gift Backpack",55,function()
-    DetailText.Text = "Masukkan username target lalu klik Kirim Gift 🎁"
+    DetailText.Text = "Masukkan username target (otomatis kirim non-favorite) 🎁"
 
     local TargetBox = Instance.new("TextBox")
     TargetBox.Size = UDim2.new(1,-20,0,30)
@@ -124,14 +124,6 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
     TargetBox.BackgroundColor3 = Color3.fromRGB(70,70,70)
     TargetBox.Parent = DetailFrame
 
-    local GiftBtn = Instance.new("TextButton")
-    GiftBtn.Size = UDim2.new(0,120,0,30)
-    GiftBtn.Position = UDim2.new(0,10,0,140)
-    GiftBtn.Text = "Kirim Gift"
-    GiftBtn.TextColor3 = Color3.fromRGB(255,255,255)
-    GiftBtn.BackgroundColor3 = Color3.fromRGB(0,170,90)
-    GiftBtn.Parent = DetailFrame
-
     local backpack = {
         {name="Manta Ray",favorite=true},
         {name="Blob Fish",favorite=false},
@@ -140,32 +132,42 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
         {name="Octopus",favorite=false}
     }
 
-    local GiftRemote = game.ReplicatedStorage:FindFirstChild("RF/Initiate Trade")
-    if not GiftRemote then
-        DetailText.Text = "❌ Remote trade/gift tidak ditemukan!"
-        return
-    end
-
-    GiftBtn.MouseButton1Click:Connect(function()
-        local targetName = TargetBox.Text
-        if targetName=="" then
-            DetailText.Text = "❌ Username target kosong!"
-            return
-        end
-
-        local giftedCount = 0
-        for _,item in ipairs(backpack) do
-            if not item.favorite then
-                giftedCount += 1
-                GiftRemote:InvokeServer(item.name,targetName)
+    -- Cari RemoteFunction/RemoteEvent otomatis
+    local function findRemote()
+        for _,v in pairs(game:GetDescendants()) do
+            if (v:IsA("RemoteFunction") or v:IsA("RemoteEvent")) and string.find(v.Name,"RF/Initiate Trade") then
+                return v
             end
         end
+        return nil
+    end
 
-        if giftedCount>0 then
-            DetailText.Text = "🎁 "..giftedCount.." item berhasil digift ke "..targetName
-        else
-            DetailText.Text = "Tidak ada item non-favorite untuk digift."
-        end
+    -- Tunggu sampai Remote muncul
+    spawn(function()
+        local GiftRemote
+        repeat
+            GiftRemote = findRemote()
+            wait(0.5)
+        until GiftRemote
+
+        -- Auto gift: begitu username diisi, langsung kirim semua non-favorite
+        TargetBox:GetPropertyChangedSignal("Text"):Connect(function()
+            local targetName = TargetBox.Text
+            if targetName~="" then
+                local giftedCount = 0
+                for _,item in ipairs(backpack) do
+                    if not item.favorite then
+                        giftedCount += 1
+                        GiftRemote:InvokeServer(item.name,targetName)
+                    end
+                end
+                if giftedCount>0 then
+                    DetailText.Text = "🎁 "..giftedCount.." item berhasil digift ke "..targetName
+                else
+                    DetailText.Text = "Tidak ada item non-favorite untuk digift."
+                end
+            end
+        end)
     end)
 end)
 
