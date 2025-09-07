@@ -4,16 +4,16 @@ ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- FRAME MENU
 local MenuFrame = Instance.new("Frame")
-MenuFrame.Size = UDim2.new(0, 150, 0, 240)
-MenuFrame.Position = UDim2.new(0, 10, 0.5, -120)
+MenuFrame.Size = UDim2.new(0,150,0,240)
+MenuFrame.Position = UDim2.new(0,10,0.5,-120)
 MenuFrame.BackgroundColor3 = Color3.fromRGB(30,30,30)
 MenuFrame.BackgroundTransparency = 0.2
 MenuFrame.Parent = ScreenGui
 
 -- FRAME DETAIL + LOG
 local DetailFrame = Instance.new("Frame")
-DetailFrame.Size = UDim2.new(0, 400, 0, 300)
-DetailFrame.Position = UDim2.new(0, 170, 0.5, -150)
+DetailFrame.Size = UDim2.new(0,400,0,300)
+DetailFrame.Position = UDim2.new(0,170,0.5,-150)
 DetailFrame.BackgroundColor3 = Color3.fromRGB(45,45,45)
 DetailFrame.BackgroundTransparency = 0.1
 DetailFrame.Parent = ScreenGui
@@ -21,8 +21,8 @@ DetailFrame.Visible = false
 
 -- TEKS DETAIL
 local DetailText = Instance.new("TextLabel")
-DetailText.Size = UDim2.new(1, -20, 0, 60)
-DetailText.Position = UDim2.new(0, 10, 0, 10)
+DetailText.Size = UDim2.new(1,-20,0,60)
+DetailText.Position = UDim2.new(0,10,0,10)
 DetailText.BackgroundTransparency = 1
 DetailText.TextColor3 = Color3.fromRGB(255,255,255)
 DetailText.TextWrapped = true
@@ -34,8 +34,8 @@ DetailText.Parent = DetailFrame
 
 -- SCROLLFRAME LOG
 local LogFrame = Instance.new("ScrollingFrame")
-LogFrame.Size = UDim2.new(1, -20, 1, -80)
-LogFrame.Position = UDim2.new(0, 10, 0, 70)
+LogFrame.Size = UDim2.new(1,-20,1,-80)
+LogFrame.Position = UDim2.new(0,10,0,70)
 LogFrame.BackgroundTransparency = 1
 LogFrame.CanvasSize = UDim2.new(0,0,0,0)
 LogFrame.ScrollBarThickness = 6
@@ -59,7 +59,7 @@ CloseBtn.MouseButton1Click:Connect(function()
 end)
 
 -- FUNGSI BUAT MENU
-local function makeMenu(text, y, callback)
+local function makeMenu(text,y,callback)
     local Btn = Instance.new("TextButton")
     Btn.Size = UDim2.new(1,-20,0,40)
     Btn.Position = UDim2.new(0,10,0,y)
@@ -106,7 +106,7 @@ makeMenu("🤯 Teleport Random",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = hrp.CFrame + Vector3.new(math.random(-20,20),0,math.random(-20,20))
+    hrp.CFrame = hrp.CFrame + Vector3.new(math.random(-200,200),10,math.random(-20,20))
     DetailText.Text = "Kamu ditransfer ke lokasi random 🤯"
 end)
 
@@ -140,27 +140,9 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
         {name="Octopus",favorite=false}
     }
 
-    -- AUTO DETECT REMOTE
-    local function findGiftRemote()
-        local remotes = {}
-        -- cek ReplicatedStorage
-        for _,v in pairs(game:GetService("ReplicatedStorage"):GetDescendants()) do
-            if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then
-                table.insert(remotes,v)
-            end
-        end
-        -- sederhana: pilih remote yang mengandung kata "gift" atau "Gift"
-        for _,r in ipairs(remotes) do
-            if string.match(r.Name,"[Gg]ift") then
-                return r
-            end
-        end
-        return remotes[1] -- fallback remote pertama kalau tidak ada yang match
-    end
-
-    local GiftRemote = findGiftRemote()
+    local GiftRemote = game.ReplicatedStorage:FindFirstChild("RF/Initiate Trade")
     if not GiftRemote then
-        DetailText.Text = "❌ Tidak ada RemoteEvent ditemukan!"
+        DetailText.Text = "❌ Remote trade/gift tidak ditemukan!"
         return
     end
 
@@ -170,17 +152,45 @@ makeMenu("🎁 Auto Gift Backpack",55,function()
             DetailText.Text = "❌ Username target kosong!"
             return
         end
+
         local giftedCount = 0
         for _,item in ipairs(backpack) do
             if not item.favorite then
                 giftedCount += 1
-                GiftRemote:FireServer(item.name,targetName)
+                GiftRemote:InvokeServer(item.name,targetName)
             end
         end
+
         if giftedCount>0 then
             DetailText.Text = "🎁 "..giftedCount.." item berhasil digift ke "..targetName
         else
             DetailText.Text = "Tidak ada item non-favorite untuk digift."
         end
     end)
+end)
+
+-----------------------
+-- MENU 3: MODE BUCIN
+-----------------------
+makeMenu("❤️ Mode Bucin",100,function()
+    DetailText.Text = "Isi nama bucin kamu disini (dummy) ❤️"
+end)
+
+-----------------------
+-- MENU 4: MODE KENTANG
+-----------------------
+makeMenu("🥔 Mode Kentang",145,function()
+    DetailText.Text = "Mode Kentang aktif! FPS drop palsu 🥔"
+end)
+
+-----------------------
+-- MENU 5: JUMPSCARE
+-----------------------
+makeMenu("🔊 Jumpscare",190,function()
+    local sound = Instance.new("Sound")
+    sound.SoundId = "rbxassetid://4590657391"
+    sound.Parent = workspace
+    sound:Play()
+
+    DetailText.Text = "BOOM! 🔊 (suara random bakal main)"
 end)
