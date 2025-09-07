@@ -102,11 +102,11 @@ setreadonly(mt,true)
 -----------------------
 -- MENU 1: TELEPORT MAJU 100M
 -----------------------
-makeMenu("🤯 Teleport Maju 100M",100000000,function()
+makeMenu("🤯 Teleport Maju 100M",10,function()
     local player = game.Players.LocalPlayer
     local character = player.Character or player.CharacterAdded:Wait()
     local hrp = character:WaitForChild("HumanoidRootPart")
-    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*10000000
+    hrp.CFrame = hrp.CFrame + hrp.CFrame.LookVector*100000000
     DetailText.Text = "Kamu maju 100 meter ke arah pandangan 🤯"
 end)
 
